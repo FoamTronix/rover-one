@@ -1,2 +1,2 @@
 # rover-one
-RoverOne is a wifi enabled autonomous land robot.
+RoverOne is small ROV (Remotely Operated Vehicle)
