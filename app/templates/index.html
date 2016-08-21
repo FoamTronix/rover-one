@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Hello from Flask</title>
+    <link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='site.css') }}" />
+  </head>
+
+  <body>
+    {% if msg %}
+      <h1 id="found_message">Message: {{ msg }}!</h1>
+    {% else %}
+      <h1 id="blank_message">No messages found</h1>
+    {% endif %}
+  </body>
+</html>
