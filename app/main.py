@@ -9,4 +9,4 @@ def index(msg=None):
     return render_template('index.html', msg = msg)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='192.168.0.17')
