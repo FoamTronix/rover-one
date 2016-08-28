@@ -17,14 +17,14 @@ def index(msg=None):
     return render_template('index.html', msg = msg)
 
 @app.route('/ledon')
-def ledon:
+def ledon():
     GPIO.output(pin, GPIO.HIGH)
-    return 'LED ON'
+    return redirect('/LED ON', code=200)
 
 @app.route('/ledoff')
-def ledoff:
+def ledoff():
     GPIO.output(pin, GPIO.LOW)
-    return 'LED OFF'
+    return redirect('/LED OFF', code=200)
 
 if __name__ == "__main__":
     app.run(host='192.168.0.17')
