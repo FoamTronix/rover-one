@@ -10,7 +10,7 @@ desires.  The same can be said about the delay between blinks.
 import time
 import RPi.GPIO as GPIO
 
-pin = 27  # This is the board number for which GPIO pin will be used
+pin = 13 # GPIO 27  # This is the board number for which GPIO pin will be used
 delay = 0.5  # This is the amount of delay (in seconds) between blinks
 
 GPIO.setmode(GPIO.BOARD)
