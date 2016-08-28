@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, redirect
 
 import time
 import RPi.GPIO as GPIO
@@ -19,12 +19,12 @@ def index(msg=None):
 @app.route('/ledon')
 def ledon():
     GPIO.output(pin, GPIO.HIGH)
-    return redirect('/LED ON', code=200)
+    return redirect('http://192.168.0.17:5000/ON')
 
 @app.route('/ledoff')
 def ledoff():
     GPIO.output(pin, GPIO.LOW)
-    return redirect('/LED OFF', code=200)
+    return redirect('http://192.168.0.17:5000/OFF')
 
 if __name__ == "__main__":
     app.run(host='192.168.0.17')
