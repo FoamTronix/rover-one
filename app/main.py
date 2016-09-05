@@ -22,15 +22,15 @@ def index(msg=None):
 @app.route('/ledon')
 def ledon():
     # GPIO.output(pin, GPIO.HIGH)
-    ser.write('L01')
-    ser.write('L11')
+    ser.write("L01\n")
+    ser.write("L11\n")
     return redirect('http://192.168.0.17:5000/ON')
 
 @app.route('/ledoff')
 def ledoff():
     # GPIO.output(pin, GPIO.LOW)
-    ser.write('L00')
-    ser.write('L10')
+    ser.write("L00\n")
+    ser.write("L10\n")
     return redirect('http://192.168.0.17:5000/OFF')
 
 if __name__ == "__main__":
