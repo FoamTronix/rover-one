@@ -1,11 +1,24 @@
+// Servos
+#include <Servo.h>
+Servo servoPan;  // 0
+Servo servoTilt; // 1
+int servos[2] = { 90, 90 }; // Pan, Title
+
+// Lights
 char command[4];
 int lightOnePin = 3; // 0
 int lightTwoPin = 4; // 1
 int lightPinOffset = 3;
-int lights[2] = {0, 0};
+int lights[2] = { 0, 0 };
 
 void setup() {
   Serial.begin(9600);   // opens serial port, sets data rate to 9600 bps
+
+  // Servos
+  servoPan.attach(9);
+  servoTilt.attach(10);
+
+  // Lights
   pinMode(lightOnePin, OUTPUT);
   pinMode(lightTwoPin, OUTPUT);
   digitalWrite(lightOnePin, LOW);
@@ -22,6 +35,7 @@ void loop() {
     //Serial.readString(); // Clear out anything else.
     displayCommand();
     processCommand();
+    displayServos();
     displayLights();
   }
 }
@@ -41,32 +55,41 @@ void displayCommand() {
 }
 
 void processCommand() {
-  int lightPos = -1;
-  if (command[0] == 'L') {
-    lightPos = toInt(command[1]);
-    lights[lightPos] = toInt(command[2]);
-    if (lights[lightPos] == 1) {
-      digitalWrite(lightPos + lightPinOffset, HIGH);
+  int sensorPos = -1;
+  if (command[0] == 'S') {
+    sensorPos = toInt(command[1]);
+    servos[sensorPos] = toInt(command[2]); // 0 to 180
+    if (sensorPos == 0) { // Pan
+      servoPan.write(servos[sensorPos]); 
+    } else if (sensorPos == 1) { // Tilt
+      servoTilt.write(servos[sensorPos]);
+    }   
+  } else if (command[0] == 'L') {
+    sensorPos = toInt(command[1]);
+    lights[sensorPos] = toInt(command[2]); // 0 or 1
+    if (lights[sensorPos] == 1) {
+      digitalWrite(sensorPos + lightPinOffset, HIGH);
     } else {
-      digitalWrite(lightPos + lightPinOffset, LOW);
+      digitalWrite(sensorPos + lightPinOffset, LOW);
     }
   } else {
     Serial.println("Discarded unknown command");
   }
 }
 
+void displayServos() {
+  Serial.print("Servo Pan (S0): ");
+  Serial.print(servos[0]);
+  Serial.print("Servo Tilt (S1): ");
+  Serial.print(servos[1]);
+  Serial.println("******");
+}
+
 void displayLights() {
-  for(int i = 0; i < 2; i++) {
-    Serial.print("Light ");
-    Serial.print(i); 
-    Serial.print(": ");
-    Serial.print(lights[i]);
-    if (lights[i] == 0) {
-      Serial.println(" (Off)");
-    } else {
-      Serial.println(" (On)");
-    }
-  }
+  Serial.print("Light 1 (L0): ");
+  Serial.print(lights[0] == 0 ? " (OFF)" : " (On)");
+  Serial.print("Light 2 (L1): ");
+  Serial.print(lights[1] == 0 ? " (OFF)" : " (On)");  
   Serial.println("******");
 }
 
