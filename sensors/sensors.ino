@@ -1,11 +1,11 @@
 // Servos
 #include <Servo.h>
-Servo servoPan;  // 0
-Servo servoTilt; // 1
+Servo servoPan;  // Servo 0 on pin 9
+Servo servoTilt; // Servo 1 on pin 10
 int servos[2] = { 90, 90 }; // Pan, Title
 
 // Lights
-char command[4];
+char command[6];
 int lightOnePin = 3; // 0
 int lightTwoPin = 4; // 1
 int lightPinOffset = 3;
@@ -29,36 +29,24 @@ void setup() {
 // Multiple commands can be sent at the same time, but only two bytes at a time will be used.
 // [Property][Position][Value][Property][Value][Position][Property][Value]
 void loop() {
-  while(Serial.available() >= 4) {
-    //clearTerminal();
-    Serial.readBytes(command, 4);
-    //Serial.readString(); // Clear out anything else.
-    displayCommand();
+  while(Serial.available() >= 6) {
+    Serial.readBytes(command, 6);    
+    Serial.readString(); // Clear out anything else.
     processCommand();
-    displayServos();
-    displayLights();
+    displayStats();
   }
-}
-
-void clearTerminal() {
-  for(int i = 0; i< 20; i++) {
-    Serial.println('\n');
-  }
-}
-
-void displayCommand() {
-  Serial.print("Command Received: ");
-  for(int i = 0; i < 3; i++) {
-    Serial.print(command[i]);
-  }
-  Serial.println();
 }
 
 void processCommand() {
   int sensorPos = -1;
   if (command[0] == 'S') {
     sensorPos = toInt(command[1]);
-    servos[sensorPos] = toInt(command[2]); // 0 to 180
+    servos[sensorPos] = (toInt(command[2]) * 100) + (toInt(command[3]) * 10) + toInt(command[4]); // 0 to 180
+    Serial.print("Servo ");
+    Serial.println(sensorPos);
+    Serial.println(toInt(command[2]) * 100);
+    Serial.println(toInt(command[3]) * 10);
+    Serial.println(toInt(command[4]) * 1);
     if (sensorPos == 0) { // Pan
       servoPan.write(servos[sensorPos]); 
     } else if (sensorPos == 1) { // Tilt
@@ -77,19 +65,41 @@ void processCommand() {
   }
 }
 
+void displayStats() {
+  displayCommand();
+  displayServos();
+  displayLights();  
+  clearTerminal();
+}
+
+void clearTerminal() {
+  for(int i = 0; i< 20; i++) {
+    Serial.println('\n');
+  }
+}
+
+void displayCommand() {
+  Serial.print("Command Received: ");
+  for(int i = 0; i < 5; i++) {
+    Serial.print(command[i]);
+  }
+  Serial.println();
+  Serial.println("******");
+}
+
 void displayServos() {
   Serial.print("Servo Pan (S0): ");
-  Serial.print(servos[0]);
+  Serial.println(servos[0]);
   Serial.print("Servo Tilt (S1): ");
-  Serial.print(servos[1]);
+  Serial.println(servos[1]);
   Serial.println("******");
 }
 
 void displayLights() {
   Serial.print("Light 1 (L0): ");
-  Serial.print(lights[0] == 0 ? " (OFF)" : " (On)");
+  Serial.println(lights[0] == 0 ? " (OFF)" : " (On)");
   Serial.print("Light 2 (L1): ");
-  Serial.print(lights[1] == 0 ? " (OFF)" : " (On)");  
+  Serial.println(lights[1] == 0 ? " (OFF)" : " (On)");  
   Serial.println("******");
 }
 
