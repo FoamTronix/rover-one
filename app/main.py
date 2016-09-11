@@ -22,16 +22,26 @@ def index(msg=None):
 @app.route('/ledon')
 def ledon():
     # GPIO.output(pin, GPIO.HIGH)
-    ser.write("L01\n")
-    ser.write("L11\n")
+    ser.write("L0100\n")
+    ser.write("L1100\n")
     return redirect('http://192.168.0.17:5000/ON')
 
 @app.route('/ledoff')
 def ledoff():
     # GPIO.output(pin, GPIO.LOW)
-    ser.write("L00\n")
-    ser.write("L10\n")
+    ser.write("L0000\n")
+    ser.write("L1000\n")
     return redirect('http://192.168.0.17:5000/OFF')
+
+@app.route('/pan/<pos>')
+def pan():
+    ser.write("S0"+pos+"\n")
+    return redirect('http://192.168.0.17:5000/pan_' + pos)
+
+@app.route('/tilt/<pos>')
+def tilt():
+    ser.write("S1"+pos+"\n")
+    return redirect('http://192.168.0.17:5000/tilt_' + pos)
 
 if __name__ == "__main__":
     app.run(host='192.168.0.17')
