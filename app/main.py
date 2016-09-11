@@ -34,12 +34,12 @@ def ledoff():
     return redirect('http://192.168.0.17:5000/OFF')
 
 @app.route('/pan/<pos>')
-def pan():
+def pan(pos):
     ser.write("S0"+pos+"\n")
     return redirect('http://192.168.0.17:5000/pan_' + pos)
 
 @app.route('/tilt/<pos>')
-def tilt():
+def tilt(pos):
     ser.write("S1"+pos+"\n")
     return redirect('http://192.168.0.17:5000/tilt_' + pos)
 
