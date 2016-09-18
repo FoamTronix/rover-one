@@ -2,14 +2,14 @@
 #include <NewPing.h>
 #define SONAR_NUM     1 // Number or sensors.
 #define MAX_DISTANCE 200 // Maximum distance (in cm) to ping.
-#define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
+#define PING_INTERVAL 100 // 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
 unsigned long pingTimer[SONAR_NUM];   // Holds the times when the next ping should happen for each sensor.
 unsigned int pingRangesCm[SONAR_NUM]; // Where the ping distances are stored.
 uint8_t currentSensor = 0;            // Keeps track of which sensor is active.
 
 NewPing sonar[SONAR_NUM] = {     // Sensor object array.
-  NewPing(8, 7, MAX_DISTANCE)
+  NewPing(8, 7, MAX_DISTANCE)    // TriggerPin, EchoPin, MaxDistance
 };
 
 
@@ -51,6 +51,7 @@ void setup() {
 // [Property][Position][Value][Property][Value][Position][Property][Value]
 void loop() {
   readPingSensors();      // Always read and store the ping sensor values
+  displayPingSensors();
   while(Serial.available() >= 6) {
     Serial.readBytes(command, 6);    
     Serial.readString(); // Clear out anything else.
