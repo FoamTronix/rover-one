@@ -1,5 +1,5 @@
-from flask import Flask
-from flask import render_template, redirect
+from flask import Flask, request, render_template, redirect, jsonify, Response
+from camera import VideoCamera
 
 import serial
 import time
@@ -7,41 +7,77 @@ import RPi.GPIO as GPIO
 
 ser = serial.Serial('/dev/ttyUSB0', 9600)
 
-# pin = 13 # GPIO 27  # This is the board number for which GPIO pin will be used
-# delay = 0.5  # This is the amount of delay (in seconds) between blinks
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(pin, GPIO.OUT)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(pin, GPIO.OUT)
 
 app = Flask(__name__)
 
 @app.route('/')
-@app.route('/<msg>')
-def index(msg=None):
-    return render_template('index.html', msg = msg)
+def index():
+  return render_template('index.html')
 
-@app.route('/ledon')
-def ledon():
-    # GPIO.output(pin, GPIO.HIGH)
-    ser.write("L0100\n")
-    ser.write("L1100\n")
-    return redirect('http://192.168.0.17:5000/ON')
+# Movements
+# -------------------------------------------------
+@app.route('/move/<state>')
+def move(state):
+  if state.lower() == 'forward':
+    # ser.write("MoveForward\n")
+    return jsonify({ 'move': 'forward' })
+  elif state.lower() == 'backward':
+    # ser.write("MoveBackward\n")
+    return jsonify({ 'move': 'backward' })
+  else:
+    # ser.write("MoveStop\n")
+    return jsonify({ 'move': 'stop' })
 
-@app.route('/ledoff')
-def ledoff():
-    # GPIO.output(pin, GPIO.LOW)
-    ser.write("L0000\n")
-    ser.write("L1000\n")
-    return redirect('http://192.168.0.17:5000/OFF')
+@app.route('/turn/<state>')
+def turn(state):
+  if state.lower() == 'left':
+    # ser.write("TurnLeft\n")
+    return jsonify({ 'turn': 'left' })
+  elif state.lower() == 'right':
+    # ser.write("TurnRight\n")
+    return jsonify({ 'turn': 'right' })
+  else:
+    # ser.write("TurnCenter\n")
+    return jsonify({ 'turn': 'center' })
+# -------------------------------------------------
 
-@app.route('/pan/<pos>')
-def pan(pos):
-    ser.write("S0"+pos+"\n")
-    return redirect('http://192.168.0.17:5000/pan_' + pos)
+# Lights
+# -------------------------------------------------
+@app.route('/lights/<state>')
+def lights(state):
+  if state.lower() == 'on':
+    ser.write("LightsOn\n")
+    return jsonify({ 'lights': 'on' })
+  else:
+    ser.write("LightsOff\n")
+    return jsonify({ 'lights': 'off' })
 
-@app.route('/tilt/<pos>')
-def tilt(pos):
-    ser.write("S1"+pos+"\n")
-    return redirect('http://192.168.0.17:5000/tilt_' + pos)
+@app.route('/infrared/<state>')
+def infrared(state):
+  if state.lower() == 'on':
+    # ser.write("InfraredOn\n")
+    return jsonify({ 'infrared': 'on' })
+  else:
+    # ser.write("InfraredOff\n")
+    return jsonify({ 'infrared': 'off' })
+# -------------------------------------------------
+
+# Camera
+# -------------------------------------------------
+@app.route('/video_feed')
+def video_feed():
+  return Response(gen(VideoCamera()),
+                  mimetype='multipart/x-mixed-replace; boundary=frame')
+
+def gen(camera):
+  while True:
+    frame = camera.get_frame()
+    yield (b'--frame\r\n'
+           b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+# -------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(host='192.168.0.17')
+  # app.run(host='192.168.0.17', debug=True)
+  app.run(host='0.0.0.0', threaded=True)

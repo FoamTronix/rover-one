@@ -1,7 +1,13 @@
-#found_message {
-  color: green;
+#video_feed_area {
+  width: 400px;
+  float: left;
 }
 
-#blank_message {
-  color: red;
+#video_feed_area #bg {
+  width: 400px;
+}
+
+#rover_controls {
+  width: 200;
+  float: right;
 }
