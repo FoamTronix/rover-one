@@ -71,7 +71,8 @@ def infrared(state):
 def sensors():
   ser.write("Sensors\n")
   data = ser.readline().strip()
-  return jsonify({ 'sensors': json.loads(data) })
+  data = "{\"sensors\": %s}" % json_input
+  return jsonify(jsonloads(data))
 # -------------------------------------------------
 
 # Camera
