@@ -64,6 +64,15 @@ def infrared(state):
     return jsonify({ 'infrared': 'off' })
 # -------------------------------------------------
 
+# Sensor Readings
+# -------------------------------------------------
+@app.route('/sensors')
+def sensors():
+  ser.write("Sensors\n")
+  data = ser.readline()
+  return jsonify({ 'sensors': data })
+# -------------------------------------------------
+
 # Camera
 # -------------------------------------------------
 @app.route('/video_feed')
