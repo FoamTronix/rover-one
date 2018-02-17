@@ -72,7 +72,9 @@ def sensors():
   ser.write("Sensors\n")
   data = ser.readline().strip()
   data = "{\"sensors\": %s}" % data
-  return jsonify(jsonloads(data))
+  data = json.loads(data)
+  data = json.dumps(data) # cleans up float values, and makes sure values are correct
+  return data
 # -------------------------------------------------
 
 # Camera
