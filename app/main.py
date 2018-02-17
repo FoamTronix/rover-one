@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, jsonify, Response
 from camera import VideoCamera
 
+import json
 import serial
 import time
 import RPi.GPIO as GPIO
@@ -69,8 +70,8 @@ def infrared(state):
 @app.route('/sensors')
 def sensors():
   ser.write("Sensors\n")
-  data = ser.readline()
-  return jsonify({ 'sensors': data })
+  data = ser.readline().strip()
+  return jsonify({ 'sensors': json.loads(data) })
 # -------------------------------------------------
 
 # Camera

@@ -126,11 +126,11 @@ void performSystemTests() {
 
 void sensorReadings() {
   String data = "{";
-  data += "'ping1':" + String(pingRangesCm[0], 3) + ",";
-  data += "'ping2':" + String(pingRangesCm[1], 3) + ",";
-  data += "'ping3':" + String(pingRangesCm[2], 3) + ",";
-  data += "'ping4':" + String(pingRangesCm[3], 3) + ",";
-  data += "'temp':" + String(lastTempValue, 3);
+  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
+  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
+  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
+  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
+  data += "\"temp\":" + String(lastTempValue, 3);
   data += "}";
   Serial.println(data);
 }
