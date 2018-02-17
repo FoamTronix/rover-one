@@ -70,3 +70,18 @@ function infraredOff () {
   });
 }
 // -------------------------------------------------
+
+// Sensors
+// -------------------------------------------------
+function sensors () {
+  $.get('/sensors', function( data ) {
+    console.log(data)
+  });
+}
+
+function infraredOff () {
+  $.get('/infrared/off', function( data ) {
+    console.log(data)
+  });
+}
+// -------------------------------------------------
