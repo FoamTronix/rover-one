@@ -74,7 +74,7 @@ def sensors():
   data = "{\"sensors\": %s}" % data
   data = json.loads(data)
   data = json.dumps(data) # cleans up float values, and makes sure values are correct
-  return jsonify(data)
+  return data, 200, {'Content-Type': 'application/json'} # cannot use jsonify, so do it manually
 # -------------------------------------------------
 
 # Camera
