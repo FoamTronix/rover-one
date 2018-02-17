@@ -78,10 +78,4 @@ function sensors () {
     console.log(data)
   });
 }
-
-function infraredOff () {
-  $.get('/infrared/off', function( data ) {
-    console.log(data)
-  });
-}
 // -------------------------------------------------
