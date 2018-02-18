@@ -15,7 +15,7 @@
 #define REVERSE_RIGHT 5
 #define SIGNAL_FRONT_LEFT 6
 #define SIGNAL_REAR_LEFT 7
-#define SIGNAL_FRONT_RIGHT 8
+#define SIGNAL_FRONT_RIGHT 8 // start at 0 on second Shift Register
 #define SIGNAL_REAR_RIGHT 9
 #define INFRARED1 10
 #define INFRARED2 11
@@ -32,8 +32,8 @@ boolean lights[LIGHT_COUNT];
 // Motors
 // ##########################################
 #include <Servo.h> 
-#define MOVE_A 4        // L9110 chip :: Input A
-#define MOVE_B 5        // L9110 chip :: Input B
+#define MOVE_A 5        // L9110 chip :: Input A
+#define MOVE_B 4        // L9110 chip :: Input B
 #define STEERING_PIN 6  // Pin 6 is a PWM pin for the servo.
 Servo steeringServo; 
 
