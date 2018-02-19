@@ -1,5 +1,4 @@
 #define ONE_SECOND 1000
-#define SIGNAL_DURATION 500
 
 // Lights
 // ##########################################
@@ -24,9 +23,10 @@
 #define INFRARED5 14
 #define INFRARED6 15
 #define LIGHT_COUNT 16
+#define SIGNAL_DELAY 500 // milliseconds
+unsigned long int lastSignalChange;
 boolean signalLeft;
 boolean signalRight;
-int signalDurationCount; 
 boolean lights[LIGHT_COUNT];
 
 // Motors
@@ -72,14 +72,12 @@ OneWire oneWire(ONE_WIRE_PIN);
 DallasTemperature sensors(&oneWire);
 float lastTempValue = 0.0;
 
-// Interrupts
+// LDR
 // ##########################################
-// Interrupt is called once a millisecond
-SIGNAL(TIMER0_COMPA_vect)  {
-  if(signalLeft || signalRight) {  signalDurationCount += 1; }
-} 
+#define LDR_SENSOR_PIN A0
+int lastLDRValue;
 
-// Interrupts
+// Commands from serial
 // ##########################################
 String command; // Used to process commands from RaspberryPi
 
@@ -89,7 +87,8 @@ void setup() {
   initMotors();
   initPingSensors();
   initTemperatureSensor();
-  performSystemTests();
+  initLDRSensor();
+  // performSystemTests();
 }
 
 void loop() {
@@ -125,12 +124,15 @@ void performSystemTests() {
 }
 
 void sensorReadings() {
+  fetchTemperature();
+  fetchLDRValue();
   String data = "{";
   data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
   data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
   data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
   data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
-  data += "\"temp\":" + String(lastTempValue, 3);
+  data += "\"temp\":" + String(lastTempValue, 3) + ",";
+  data += "\"light\":" + String(lastLDRValue) + ",";
   data += "}";
   Serial.println(data);
 }
@@ -139,13 +141,15 @@ void sensorReadings() {
 // Lights
 //##########################################
 void initLights() {
+  lastSignalChange;
   signalLeft = false;
   signalRight = false;
-  signalDurationCount = 0;
 
   pinMode(DS_PIN, OUTPUT);
   pinMode(STCP_PIN, OUTPUT);
   pinMode(SHCP_PIN, OUTPUT);
+
+  allLightsOff();
 }
 
 void testLights() {
@@ -185,7 +189,7 @@ void allLightsOff() {
   updateLights(); 
 }
 
-void lightsOn() {
+void lightsOn() {  
   lights[FRONT_LEFT] = HIGH;
   lights[FRONT_RIGHT] = HIGH;
   lights[REAR_LEFT] = HIGH;
@@ -214,10 +218,11 @@ void reverseLightsOff() {
 }
 
 void signalCheck() {
-  if(signalDurationCount < SIGNAL_DURATION) { return; }
+  if(!signalLeft && !signalRight) { return; }
+  if(lastSignalChange + SIGNAL_DELAY >= millis()) { return; }
+  lastSignalChange = millis();
   if(signalLeft) { toggleLeftSignalLight(); }
   if(signalRight) { toggleRightSignalLight(); }
-  signalDurationCount = 0;
 }
 
 void leftSignalLightOn() {
@@ -231,7 +236,6 @@ void rightSignalLightOn() {
 void signalLightsOff() {
   signalLeft = false;
   signalRight = false;  
-  signalDurationCount = 0;
   lights[SIGNAL_FRONT_LEFT] = LOW; 
   lights[SIGNAL_REAR_LEFT] = LOW;
   lights[SIGNAL_FRONT_RIGHT] = LOW; 
@@ -272,17 +276,16 @@ void infraredOff() {
 }
 
 void updateLights() {
-
-//Pin connected to ST_CP of 74HC595
-int latchPin = 8;
-//Pin connected to SH_CP of 74HC595
-int clockPin = 12;
-////Pin connected to DS of 74HC595
-int dataPin = 11;
-
-//  digitalWrite(STCP_PIN, LOW);
-//  shiftOut(dataPin, clockPin, LSBFIRST, leds);
-//  digitalWrite(STCP_PIN, HIGH);
+  ////Pin connected to ST_CP of 74HC595
+  //int latchPin = 8;
+  ////Pin connected to SH_CP of 74HC595
+  //int clockPin = 12;
+  //////Pin connected to DS of 74HC595
+  //int dataPin = 11;
+  //
+  ////  digitalWrite(STCP_PIN, LOW);
+  ////  shiftOut(dataPin, clockPin, LSBFIRST, leds);
+  ////  digitalWrite(STCP_PIN, HIGH);
 
   digitalWrite(STCP_PIN, LOW);
   for (int i = LIGHT_COUNT-1; i >= 0; i--) {
@@ -320,28 +323,34 @@ void testMotors() {
 }
 
 void moveForward() {
+  reverseLightsOff();
   digitalWrite(MOVE_A, HIGH);
   digitalWrite(MOVE_B, LOW);
 }
 
 void moveBackward() {  
+  reverseLightsOn();
   digitalWrite(MOVE_A, LOW);
   digitalWrite(MOVE_B, HIGH);
 }
 
 void turnLeft() {
+  leftSignalLightOn();
   steeringServo.write(0);
 }
 
 void turnRight() {
+  rightSignalLightOn();
   steeringServo.write(180);
 }
 
 void turnCenter() {
+  signalLightsOff();
   steeringServo.write(90);
 }
 
 void stopMoving() {
+  reverseLightsOff();
   digitalWrite(MOVE_A, LOW);
   digitalWrite(MOVE_B, LOW);  
 }
@@ -387,7 +396,21 @@ void initTemperatureSensor() {
 
 void fetchTemperature() {
   sensors.requestTemperatures();  
-  lastTempValue = sensors.getTempFByIndex(0);
+  lastTempValue = sensors.getTempCByIndex(0);
 }
+//##########################################
+//##########################################
+
+//##########################################
+// LDR (light dependent resistor) Sensor
+//##########################################
+void initLDRSensor() {
+  lastLDRValue = 0;
+}
+
+void fetchLDRValue() {
+  lastLDRValue = analogRead(LDR_SENSOR_PIN);  
+}
+//##########################################
 //##########################################
 
