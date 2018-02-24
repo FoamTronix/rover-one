@@ -132,7 +132,7 @@ void sensorReadings() {
   data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
   data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
   data += "\"temp\":" + String(lastTempValue, 3) + ",";
-  data += "\"light\":" + String(lastLDRValue) + ",";
+  data += "\"light\":" + String(lastLDRValue);
   data += "}";
   Serial.println(data);
 }
