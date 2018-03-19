@@ -9,3 +9,12 @@ https://blog.miguelgrinberg.com/post/video-streaming-with-flask
 https://github.com/miguelgrinberg/flask-video-streaming/tree/v1
 
 https://learn.adafruit.com/adafruit-arduino-lesson-14-servo-motors/if-the-servo-misbehaves
+
+
+## Tasks left
+
+1) Wire common on ping sensors
+  * splice wires
+2) Servo
+  * X on servo connector is the signal line
+3) Motors
