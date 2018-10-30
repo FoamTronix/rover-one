@@ -9,13 +9,13 @@
 #define RED_LED1 0
 #define RED_LED2 1
 #define RED_LED3 2
-#define RED_LED4 3
-#define GREEN_LED5 4
-#define GREEN_LED6 5
+#define YELLOW_LED4 3
+#define YELLOW_LED5 4
+#define YELLOW_LED6 5
 #define GREEN_LED7 6
 #define GREEN_LED8 7
-#define YELLOW_LED9 8 // start at 0 on second Shift Register
-#define YELLOW_LED10 9
+#define GREEN_LED9 8 // start at 0 on second Shift Register
+#define BLUE_LED10 9
 #define BLUE_LED11 10
 #define BLUE_LED12 11
 #define WHITE_LED13 12
@@ -84,9 +84,9 @@ String command; // Used to process commands from RaspberryPi
 void setup() {
   Serial.begin(9600);
   initLights();
-  Serial.println("Turning Red Lights On");
-  redLightsOn();
-  Serial.println("Red Lights are On");  
+  Serial.println("Turning ALL Lights On");
+  allLightsOn();
+  Serial.println("ALL Lights are On");  
 //  initMotors();
 //  initPingSensors();
 //  initTemperatureSensor();
@@ -217,13 +217,13 @@ void allLightsOff() {
   lights[RED_LED1] = LOW;
   lights[RED_LED2] = LOW;
   lights[RED_LED3] = LOW;
-  lights[RED_LED4] = LOW;
-  lights[GREEN_LED5] = LOW;
-  lights[GREEN_LED6] = LOW;
+  lights[YELLOW_LED4] = LOW;
+  lights[YELLOW_LED5] = LOW;
+  lights[YELLOW_LED6] = LOW;
   lights[GREEN_LED7] = LOW;
   lights[GREEN_LED8] = LOW;
-  lights[YELLOW_LED9] = LOW;
-  lights[YELLOW_LED10] = LOW;
+  lights[GREEN_LED9] = LOW;
+  lights[BLUE_LED10] = LOW;
   lights[BLUE_LED11] = LOW;
   lights[BLUE_LED12] = LOW;
   lights[WHITE_LED13] = LOW;
@@ -237,13 +237,13 @@ void allLightsOn() {
   lights[RED_LED1] = HIGH;
   lights[RED_LED2] = HIGH;
   lights[RED_LED3] = HIGH;
-  lights[RED_LED4] = HIGH;
-  lights[GREEN_LED5] = HIGH;
-  lights[GREEN_LED6] = HIGH;
+  lights[YELLOW_LED4] = HIGH;
+  lights[YELLOW_LED5] = HIGH;
+  lights[YELLOW_LED6] = HIGH;
   lights[GREEN_LED7] = HIGH;
   lights[GREEN_LED8] = HIGH;
-  lights[YELLOW_LED9] = HIGH;
-  lights[YELLOW_LED10] = HIGH;
+  lights[GREEN_LED9] = HIGH;
+  lights[BLUE_LED10] = HIGH;
   lights[BLUE_LED11] = HIGH;
   lights[BLUE_LED12] = HIGH;
   lights[WHITE_LED13] = HIGH;
@@ -255,7 +255,6 @@ void redLightsOff() {
   lights[RED_LED1] = LOW;
   lights[RED_LED2] = LOW;
   lights[RED_LED3] = LOW;
-  lights[RED_LED4] = LOW; 
   updateLights();  
 }
 
@@ -263,45 +262,46 @@ void redLightsOn() {
   lights[RED_LED1] = HIGH;
   lights[RED_LED2] = HIGH;
   lights[RED_LED3] = HIGH;
-  lights[RED_LED4] = HIGH; 
-  updateLights();  
-}
-
-void greenLightsOff() {
-  lights[GREEN_LED5] = LOW;
-  lights[GREEN_LED6] = LOW;
-  lights[GREEN_LED7] = LOW;
-  lights[GREEN_LED8] = LOW;
-  updateLights();  
-}
-
-void greenLightsOn() {
-  lights[GREEN_LED5] = HIGH;
-  lights[GREEN_LED6] = HIGH;
-  lights[GREEN_LED7] = HIGH;
-  lights[GREEN_LED8] = HIGH;
   updateLights();  
 }
 
 void yellowLightsOff() {
-  lights[YELLOW_LED9] = LOW;
-  lights[YELLOW_LED10] = LOW;
+  lights[YELLOW_LED4] = LOW;
+  lights[YELLOW_LED5] = LOW;
+  lights[YELLOW_LED6] = LOW;
   updateLights();  
 }
 
 void yellowLightsOn() {
-  lights[YELLOW_LED9] = HIGH;
-  lights[YELLOW_LED10] = HIGH;
+  lights[YELLOW_LED4] = HIGH;
+  lights[YELLOW_LED5] = HIGH;
+  lights[YELLOW_LED6] = HIGH;
+  updateLights();  
+}
+
+void greenLightsOff() {
+  lights[GREEN_LED7] = LOW;
+  lights[GREEN_LED8] = LOW;
+  lights[GREEN_LED9] = LOW;
+  updateLights();  
+}
+
+void greenLightsOn() {
+  lights[GREEN_LED7] = HIGH;
+  lights[GREEN_LED8] = HIGH;
+  lights[GREEN_LED9] = HIGH;
   updateLights();  
 }
 
 void blueLightsOff() {
+  lights[BLUE_LED10] = LOW;
   lights[BLUE_LED11] = LOW;
   lights[BLUE_LED12] = LOW;
   updateLights();  
 }
 
 void blueLightsOn() {
+  lights[BLUE_LED10] = HIGH;
   lights[BLUE_LED11] = HIGH;
   lights[BLUE_LED12] = HIGH;
   updateLights();  
