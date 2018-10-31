@@ -84,9 +84,6 @@ String command; // Used to process commands from RaspberryPi
 void setup() {
   Serial.begin(9600);
   initLights();
-  Serial.println("Turning ALL Lights On");
-  allLightsOn();
-  Serial.println("ALL Lights are On");  
 //  initMotors();
 //  initPingSensors();
 //  initTemperatureSensor();
@@ -179,15 +176,15 @@ void testLights() {
   delay(ONE_SECOND);
   redLightsOff();
   delay(ONE_SECOND);
+
+  yellowLightsOn();
+  delay(ONE_SECOND);
+  yellowLightsOff();
+  delay(ONE_SECOND);
   
   greenLightsOn();
   delay(ONE_SECOND);
   greenLightsOff();
-  delay(ONE_SECOND);
-  
-  yellowLightsOn();
-  delay(ONE_SECOND);
-  yellowLightsOff();
   delay(ONE_SECOND);
   
   blueLightsOn();
