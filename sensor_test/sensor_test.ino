@@ -30,11 +30,11 @@ boolean lights[LIGHT_COUNT];
 
 //// Motors
 //// ##########################################
-//#include <Servo.h> 
-//#define MOVE_A 5        // L9110 chip :: Input A
-//#define MOVE_B 4        // L9110 chip :: Input B
-//#define STEERING_PIN 6  // Pin 6 is a PWM pin for the servo.
-//Servo steeringServo; 
+#include <Servo.h> 
+#define MOVE_A 5        // L9110 chip :: Input A
+#define MOVE_B 4        // L9110 chip :: Input B
+#define STEERING_PIN 6  // Pin 6 is a PWM pin for the servo.
+Servo steeringServo; 
 //
 //// Ping Sensors
 //// ##########################################
@@ -84,14 +84,21 @@ String command; // Used to process commands from RaspberryPi
 void setup() {
   Serial.begin(9600);
   initLights();
-//  initMotors();
+  initMotors();
 //  initPingSensors();
-//  initTemperatureSensor();
-//  initLDRSensor();
+  initTemperatureSensor();
+  initLDRSensor();
   // performSystemTests();
+  
+  allLightsOn();
+  
+  stopMoving(); 
+  turnCenter();
 }
 
 void loop() {
+  testServo();
+  testMotors();
 //  if(Serial.available() > 0) {
 //    command = Serial.readStringUntil('\n');
 //    processCommand();
@@ -122,15 +129,16 @@ void processCommand() {
   else if(command == "InfraredOn") { infraredOn(); }
   else if(command == "InfraredOff") { infraredOff(); }
 
+  else if(command == "Sensors") { sensorReadings(); }
+
+  else if(command == "TurnRight") { turnRight(); }
+  else if(command == "TurnLeft") { turnLeft(); }
+  else if(command == "TurnCenter") { turnCenter(); }  
+  else if(command == "TestServo") { testServo(); }  
+
 //  else if(command == "MoveForward") { moveForward(); }
 //  else if(command == "MoveBackward") { moveBackward(); }
 //  else if(command == "MoveStop") { stopMoving(); }
-
-//  else if(command == "RedLightsOn") { RedLightsOn(); }
-//  else if(command == "TurnRight") { turnRight(); }
-//  else if(command == "TurnCenter") { turnCenter(); }
-
-//  else if(command == "Sensors") { sensorReadings(); }
 }
 
 void performSystemTests() {  
@@ -138,19 +146,19 @@ void performSystemTests() {
   // testMotors();
 }
 
-//void sensorReadings() {
-//  fetchTemperature();
-//  fetchLDRValue();
-//  String data = "{";
+void sensorReadings() {
+  fetchTemperature();
+  fetchLDRValue();
+  String data = "{";
 //  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
 //  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
 //  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
 //  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
-//  data += "\"temp\":" + String(lastTempValue, 3) + ",";
-//  data += "\"light\":" + String(lastLDRValue);
-//  data += "}";
-//  Serial.println(data);
-//}
+  data += "\"temp\":" + String(lastTempValue, 3) + ",";
+  data += "\"light\":" + String(lastLDRValue);
+  data += "}";
+  Serial.println(data);
+}
 
 //##########################################
 // Lights
@@ -162,8 +170,8 @@ void initLights() {
   pinMode(DS_PIN, OUTPUT);
   pinMode(STCP_PIN, OUTPUT);
   pinMode(SHCP_PIN, OUTPUT);
-
-  testLights();
+  
+  // testLights();
 }
 
 void testLights() {
@@ -354,59 +362,66 @@ void updateLights() {
 ////##########################################
 //// Motors
 ////##########################################
-//void initMotors() {
-//  steeringServo.attach(STEERING_PIN); 
-//  pinMode(MOVE_A, OUTPUT);
-//  pinMode(MOVE_B, OUTPUT);
-//}
-//
-//void testMotors() {
-//  stopMoving();  
-//  delay(ONE_SECOND);
-//  moveForward();
-//  delay(ONE_SECOND);
-//  moveBackward();
-//  delay(ONE_SECOND);
-//  turnLeft();
-//  delay(ONE_SECOND);
-//  turnRight();
-//  delay(ONE_SECOND);
-//  turnCenter();
-//  stopMoving();  
-//}
-//
-//void moveForward() {
-//  reverseLightsOff();
-//  digitalWrite(MOVE_A, HIGH);
-//  digitalWrite(MOVE_B, LOW);
-//}
-//
-//void moveBackward() {  
-//  reverseLightsOn();
-//  digitalWrite(MOVE_A, LOW);
-//  digitalWrite(MOVE_B, HIGH);
-//}
-//
-//void turnLeft() {
-//  leftSignalLightOn();
-//  steeringServo.write(0);
-//}
-//
-//void turnRight() {
-//  rightSignalLightOn();
-//  steeringServo.write(180);
-//}
-//
-//void turnCenter() {
-//  signalLightsOff();
-//  steeringServo.write(90);
-//}
-//
-//void stopMoving() {
-//  reverseLightsOff();
-//  digitalWrite(MOVE_A, LOW);
-//  digitalWrite(MOVE_B, LOW);  
-//}
+void initMotors() {
+  steeringServo.attach(STEERING_PIN); 
+  pinMode(MOVE_A, OUTPUT);
+  pinMode(MOVE_B, OUTPUT);
+}
+
+void testMotors() {
+  moveForward();
+  delay(ONE_SECOND);
+  delay(ONE_SECOND);
+  moveBackward();
+  delay(ONE_SECOND);
+  delay(ONE_SECOND);
+  stopMoving();  
+  delay(ONE_SECOND);
+  delay(ONE_SECOND);
+}
+
+void moveForward() {
+  digitalWrite(MOVE_A, HIGH);
+  digitalWrite(MOVE_B, LOW);
+}
+
+void moveBackward() {  
+  digitalWrite(MOVE_A, LOW);
+  digitalWrite(MOVE_B, HIGH);
+}
+
+void stopMoving() {
+  digitalWrite(MOVE_A, LOW);
+  digitalWrite(MOVE_B, LOW);  
+}
+
+void turnLeft() {
+  Serial.println("Turn Left");
+  steeringServo.write(0);
+}
+
+void turnRight() {
+  Serial.println("Turn Right");
+  steeringServo.write(180);
+}
+
+void turnCenter() {
+  Serial.println("Turn Center");
+  steeringServo.write(90);
+}
+
+void testServo() {
+  turnLeft();
+  delay(ONE_SECOND);
+  delay(ONE_SECOND);
+  turnCenter();
+  delay(ONE_SECOND);
+  delay(ONE_SECOND);
+  turnRight();
+  delay(ONE_SECOND);
+  delay(ONE_SECOND);
+}
+
 ////##########################################
 ////##########################################
 
@@ -463,6 +478,7 @@ void initLDRSensor() {
 
 void fetchLDRValue() {
   lastLDRValue = analogRead(LDR_SENSOR_PIN);  
+  Serial.println(lastLDRValue);
 }
 //##########################################
 //##########################################
