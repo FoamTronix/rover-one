@@ -42,7 +42,7 @@ Servo steeringServo;
 #include <NewPing.h>
 #define SONAR_NUM     4  // Number or sensors.
 #define MAX_DISTANCE 200 // Maximum distance (in cm) to ping.
-#define PING_INTERVAL 100 // 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
+#define PING_INTERVAL 33 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
 // Using only one ping for both the Trigger and Ping.  The NewPing library takes care of 
 // toggling the pin's input/output state.
@@ -124,24 +124,28 @@ void performSystemTests() {
 }
 
 void sensorReadings() {
-  fetchTemperature();
-  fetchLDRValue();
-  String data = "{";
-  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
-  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
-  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
-  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
-  data += "\"temp\":" + String(lastTempValue, 3) + ",";
-  data += "\"light\":" + String(lastLDRValue);
-  data += "}";
-  Serial.println(data);
+//  fetchTemperature();
+//  fetchLDRValue();
+//  String data = "{";
+//  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
+//  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
+//  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
+//  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
+//  data += "\"temp\":" + String(lastTempValue, 3) + ",";
+//  data += "\"light\":" + String(lastLDRValue);
+//  data += "}";
+//  Serial.println(data);
+
+  Serial.print(pingRangesCm[0]);
+  Serial.print(" :: ");
+  Serial.println(String(pingRangesCm[0], 3));
 }
 
 //##########################################
 // Lights
 //##########################################
 void initLights() {
-  lastSignalChange;
+  lastSignalChange = 0;
   signalLeft = false;
   signalRight = false;
 
@@ -371,12 +375,26 @@ void readPingSensors() {
   for (uint8_t i = 0; i < SONAR_NUM; i++) {       // Loop through all the sensors.
     if (millis() >= pingTimer[i]) {               // Is it this sensor's time to ping?
       pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
+
+//      if (i == 0 && currentSensor == SONAR_NUM - 1)
+//        oneSensorCycle(); // Do something with results.
+      
       sonar[currentSensor].timer_stop();          // Make sure previous timer is canceled before starting a new ping (insurance).
       currentSensor = i;                          // Sensor being accessed.
       pingRangesCm[currentSensor] = 0;            // Make distance zero in case there's no ping echo for this sensor.
       sonar[currentSensor].ping_timer(echoCheck); // Do the ping (processing continues, interrupt will call echoCheck to look for echo).
     }
   } 
+}
+
+void oneSensorCycle() { // Do something with the results.
+  for (uint8_t i = 0; i < SONAR_NUM; i++) {
+    Serial.print(i);
+    Serial.print("=");
+    Serial.print(pingRangesCm[i]);
+    Serial.print("cm ");
+  }
+  Serial.println();
 }
 
 void echoCheck() { 
@@ -413,4 +431,3 @@ void fetchLDRValue() {
 }
 //##########################################
 //##########################################
-
