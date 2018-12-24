@@ -339,11 +339,13 @@ void moveBackward() {
 }
 
 void turnLeft() {
+  signalLightsOff();
   leftSignalLightOn();
   steeringServo.write(0);
 }
 
 void turnRight() {
+  signalLightsOff();
   rightSignalLightOn();
   steeringServo.write(180);
 }
