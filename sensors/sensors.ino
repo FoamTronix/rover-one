@@ -7,15 +7,15 @@
 #define SHCP_PIN 13
 
 #define FRONT_LEFT 0
-#define FRONT_RIGHT 1
-#define REAR_LEFT 2
-#define REAR_RIGHT 3
-#define REVERSE_LEFT 4
-#define REVERSE_RIGHT 5
-#define SIGNAL_FRONT_LEFT 6
-#define SIGNAL_REAR_LEFT 7
-#define SIGNAL_FRONT_RIGHT 8 // start at 0 on second Shift Register
-#define SIGNAL_REAR_RIGHT 9
+#define FRONT_RIGHT 2
+#define REAR_LEFT 4
+#define REAR_RIGHT 7
+#define REVERSE_LEFT 6
+#define REVERSE_RIGHT 9
+#define SIGNAL_FRONT_LEFT 1
+#define SIGNAL_REAR_LEFT 5
+#define SIGNAL_FRONT_RIGHT 3 
+#define SIGNAL_REAR_RIGHT 8
 #define INFRARED1 10
 #define INFRARED2 11
 #define INFRARED3 12
@@ -70,7 +70,8 @@ NewPing sonar[SONAR_NUM] = {                                   // Sensor object 
 #define ONE_WIRE_PIN 2
 OneWire oneWire(ONE_WIRE_PIN);
 DallasTemperature sensors(&oneWire);
-float lastTempValue = 0.0;
+float lastTempCValue = 0.0;
+float lastTempFValue = 0.0;
 
 // LDR
 // ##########################################
@@ -124,21 +125,22 @@ void performSystemTests() {
 }
 
 void sensorReadings() {
-//  fetchTemperature();
-//  fetchLDRValue();
-//  String data = "{";
-//  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
-//  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
-//  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
-//  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
-//  data += "\"temp\":" + String(lastTempValue, 3) + ",";
-//  data += "\"light\":" + String(lastLDRValue);
-//  data += "}";
-//  Serial.println(data);
+  fetchTemperature();
+  fetchLDRValue();
+  String data = "{";
+  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
+  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
+  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
+  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
+  data += "\"tempC\":" + String(lastTempCValue, 3) + ",";
+  data += "\"tempF\":" + String(lastTempFValue, 3) + ",";
+  data += "\"light\":" + String(lastLDRValue);
+  data += "}";
+  Serial.println(data);
 
-  Serial.print(pingRangesCm[0]);
-  Serial.print(" :: ");
-  Serial.println(String(pingRangesCm[0], 3));
+//  Serial.print(pingRangesCm[0]);
+//  Serial.print(" :: ");
+//  Serial.println(String(pingRangesCm[0], 3));
 }
 
 //##########################################
@@ -171,6 +173,26 @@ void testLights() {
   delay(ONE_SECOND); 
   rightSignalLightOn();
   delay(ONE_SECOND);
+}
+
+void allLightsOn() {
+  lights[FRONT_LEFT] = HIGH;
+  lights[FRONT_RIGHT] = HIGH;
+  lights[REAR_LEFT] = HIGH;
+  lights[REAR_RIGHT] = HIGH;
+  lights[REVERSE_LEFT] = HIGH;
+  lights[REVERSE_RIGHT] = HIGH;
+  lights[SIGNAL_FRONT_LEFT] = HIGH;
+  lights[SIGNAL_REAR_LEFT] = HIGH;
+  lights[SIGNAL_FRONT_RIGHT] = HIGH;
+  lights[SIGNAL_REAR_RIGHT] = HIGH;
+  lights[INFRARED1] = LOW;
+  lights[INFRARED2] = LOW;
+  lights[INFRARED3] = LOW;
+  lights[INFRARED4] = LOW;
+  lights[INFRARED5] = LOW;
+  lights[INFRARED6] = LOW;
+  updateLights(); 
 }
 
 void allLightsOff() {
@@ -341,13 +363,13 @@ void moveBackward() {
 void turnLeft() {
   signalLightsOff();
   leftSignalLightOn();
-  steeringServo.write(0);
+  steeringServo.write(180);
 }
 
 void turnRight() {
   signalLightsOff();
   rightSignalLightOn();
-  steeringServo.write(180);
+  steeringServo.write(0);
 }
 
 void turnCenter() {
@@ -416,7 +438,8 @@ void initTemperatureSensor() {
 
 void fetchTemperature() {
   sensors.requestTemperatures();  
-  lastTempValue = sensors.getTempCByIndex(0);
+  lastTempCValue = sensors.getTempCByIndex(0);
+  lastTempFValue = sensors.getTempFByIndex(0);
 }
 //##########################################
 //##########################################
