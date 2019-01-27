@@ -23,25 +23,25 @@ def index():
 @app.route('/move/<state>')
 def move(state):
   if state.lower() == 'forward':
-    # ser.write("MoveForward\n")
+    ser.write("MoveForward\n")
     return jsonify({ 'move': 'forward' })
   elif state.lower() == 'backward':
-    # ser.write("MoveBackward\n")
+    ser.write("MoveBackward\n")
     return jsonify({ 'move': 'backward' })
   else:
-    # ser.write("MoveStop\n")
+    ser.write("MoveStop\n")
     return jsonify({ 'move': 'stop' })
 
 @app.route('/turn/<state>')
 def turn(state):
   if state.lower() == 'left':
-    # ser.write("TurnLeft\n")
+    ser.write("TurnLeft\n")
     return jsonify({ 'turn': 'left' })
   elif state.lower() == 'right':
-    # ser.write("TurnRight\n")
+    ser.write("TurnRight\n")
     return jsonify({ 'turn': 'right' })
   else:
-    # ser.write("TurnCenter\n")
+    ser.write("TurnCenter\n")
     return jsonify({ 'turn': 'center' })
 # -------------------------------------------------
 
@@ -59,10 +59,10 @@ def lights(state):
 @app.route('/infrared/<state>')
 def infrared(state):
   if state.lower() == 'on':
-    # ser.write("InfraredOn\n")
+    ser.write("InfraredOn\n")
     return jsonify({ 'infrared': 'on' })
   else:
-    # ser.write("InfraredOff\n")
+    ser.write("InfraredOff\n")
     return jsonify({ 'infrared': 'off' })
 # -------------------------------------------------
 
