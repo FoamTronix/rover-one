@@ -282,22 +282,22 @@ void toggleRightSignalLight() {
 }
 
 void infraredOn() {
-  lights[INFRARED1] = LOW; 
-  lights[INFRARED2] = LOW;
-  lights[INFRARED3] = LOW; 
-  lights[INFRARED4] = LOW;    
-  lights[INFRARED5] = LOW; 
-  lights[INFRARED6] = LOW;    
-  updateLights(); 
-}
-
-void infraredOff() {
   lights[INFRARED1] = HIGH; 
   lights[INFRARED2] = HIGH;
   lights[INFRARED3] = HIGH; 
   lights[INFRARED4] = HIGH;    
   lights[INFRARED5] = HIGH; 
-  lights[INFRARED6] = HIGH;  
+  lights[INFRARED6] = HIGH;     
+  updateLights(); 
+}
+
+void infraredOff() {
+  lights[INFRARED1] = LOW; 
+  lights[INFRARED2] = LOW;
+  lights[INFRARED3] = LOW; 
+  lights[INFRARED4] = LOW;    
+  lights[INFRARED5] = LOW; 
+  lights[INFRARED6] = LOW;   
   updateLights(); 
 }
 
