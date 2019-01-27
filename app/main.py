@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, redirect, jsonify, Response
-from camera import VideoCamera
+#from camera import VideoCamera
 
 import json
 import serial
