@@ -128,10 +128,10 @@ void sensorReadings() {
   fetchTemperature();
   fetchLDRValue();
   String data = "{";
-  data += "\"ping1\":" + String(pingRangesCm[0], 3) + ",";
-  data += "\"ping2\":" + String(pingRangesCm[1], 3) + ",";
-  data += "\"ping3\":" + String(pingRangesCm[2], 3) + ",";
-  data += "\"ping4\":" + String(pingRangesCm[3], 3) + ",";
+  data += "\"ping1\":" + String(pingRangesCm[0]) + ",";
+  data += "\"ping2\":" + String(pingRangesCm[1]) + ",";
+  data += "\"ping3\":" + String(pingRangesCm[2]) + ",";
+  data += "\"ping4\":" + String(pingRangesCm[3]) + ",";
   data += "\"tempC\":" + String(lastTempCValue, 3) + ",";
   data += "\"tempF\":" + String(lastTempFValue, 3) + ",";
   data += "\"light\":" + String(lastLDRValue);
@@ -400,8 +400,9 @@ void readPingSensors() {
     if (millis() >= pingTimer[i]) {               // Is it this sensor's time to ping?
       pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
 
-//      if (i == 0 && currentSensor == SONAR_NUM - 1)
-//        oneSensorCycle(); // Do something with results.
+//      if (i == 0 && currentSensor == SONAR_NUM - 1) {
+//        oneSensorCycle();      
+//      }
       
       sonar[currentSensor].timer_stop();          // Make sure previous timer is canceled before starting a new ping (insurance).
       currentSensor = i;                          // Sensor being accessed.
