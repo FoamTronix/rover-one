@@ -4,7 +4,8 @@
 }
 
 #video_feed_area #bg {
-  width: 400px;
+  width: 640px;
+  height: 480px;
 }
 
 #rover_controls {
