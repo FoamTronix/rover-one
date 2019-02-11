@@ -78,12 +78,32 @@ float lastTempFValue = 0.0;
 #define LDR_SENSOR_PIN A0
 int lastLDRValue;
 
+// Software Serial
+// ##########################################
+#include <NeoSWSerial.h>
+NeoSWSerial GPS_Serial(A6, A7); // RX, TX
+volatile uint32_t newlines = 0UL;
+static void handleRxChar(uint8_t c) {
+  if (c == '\n') newlines++;
+}
+
+//#include <SoftwareSerial.h>
+//SoftwareSerial GPS_Serial(A6, A7); // RX, TX  
+
 // Commands from serial
 // ##########################################
 String command; // Used to process commands from RaspberryPi
 
 void setup() {
+  GPS_Serial.attachInterrupt(handleRxChar);
+  GPS_Serial.begin(9600);
+  GPS_Serial.listen();
+
+//  GPS_Serial.begin(9600);
+//  GPS_Serial.listen();
+
   Serial.begin(9600);
+  
   initLights();
   initMotors();
   initPingSensors();
@@ -97,6 +117,11 @@ void loop() {
     command = Serial.readStringUntil('\n');
     processCommand();
   }
+
+//  while (GPS_Serial.available() > 0) {
+//    char inByte = GPS_Serial.read();
+//  }
+    
   signalCheck();
   readPingSensors();
 }
